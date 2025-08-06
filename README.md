@@ -8,6 +8,54 @@
 
 <br/>
 
+## 👨‍👩‍👧 팀 역할 분담
+
+<table>
+  <tr>
+    <th>GitHub</th>
+    <th>이름</th>
+    <th>역할</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/userA">
+        <img src="https://github.com/userA.png" width="80" height="80" alt="userA"/>
+      </a>
+    </td>
+    <td align="center">임유진</td>
+    <td>PPT, Elasticsearch 자료 정리</td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/userB">
+        <img src="https://github.com/userB.png" width="80" height="80" alt="userB"/>
+      </a>
+    </td>
+    <td align="center">임채준</td>
+    <td>ELK 실험 환경 구성 및 로그 분석</td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/userC">
+        <img src="https://github.com/userC.png" width="80" height="80" alt="userC"/>
+      </a>
+    </td>
+    <td align="center">문민경</td>
+    <td>EFK 실험 환경 구성 및 성능 측정</td>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/userD">
+        <img src="https://github.com/userD.png" width="80" height="80" alt="userD"/>
+      </a>
+    </td>
+    <td align="center">황병길</td>
+    <td>파이프라인 성능비교, 결과 정리</td>
+  </tr>
+</table>
+
+<br/>
+
 ## 🛠️ 전체 아키텍처
 
 ![구성도 예시 삽입](your-architecture-diagram-url.png)
@@ -106,52 +154,6 @@
 
 
 ```
-
-## 👨‍👩‍👧 팀 역할 분담
-
-<table>
-  <tr>
-    <th>GitHub</th>
-    <th>이름</th>
-    <th>역할</th>
-  </tr>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/userA">
-        <img src="https://github.com/userA.png" width="80" height="80" alt="userA"/>
-      </a>
-    </td>
-    <td align="center">임유진</td>
-    <td>PPT, Elasticsearch 자료 정리</td>
-  </tr>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/userB">
-        <img src="https://github.com/userB.png" width="80" height="80" alt="userB"/>
-      </a>
-    </td>
-    <td align="center">임채준</td>
-    <td>ELK 실험 환경 구성 및 로그 분석</td>
-  </tr>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/userC">
-        <img src="https://github.com/userC.png" width="80" height="80" alt="userC"/>
-      </a>
-    </td>
-    <td align="center">문민경</td>
-    <td>EFK 실험 환경 구성 및 성능 측정</td>
-  </tr>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/userD">
-        <img src="https://github.com/userD.png" width="80" height="80" alt="userD"/>
-      </a>
-    </td>
-    <td align="center">황병길</td>
-    <td>파이프라인 성능비교, 결과 정리</td>
-  </tr>
-</table>
 
 
 ## 🛠 트러블슈팅 (Troubleshooting)
