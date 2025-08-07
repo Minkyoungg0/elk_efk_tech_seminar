@@ -1,5 +1,7 @@
 # 🚀 대용량 로그 수집/분석 ELK vs EFK 파이프라인 프로젝트
 
+![image](./first_page.png)
+
 ## 💡 프로젝트 소개
 
 이 프로젝트는 ELK(Elasticsearch, Logstash, Kibana)와 EFK(Elasticsearch, Fluentd, Kibana) 기반의 로그 파이프라인을 구축·운영하여  
@@ -10,47 +12,52 @@
 
 ## 👨‍👩‍👧 팀 역할 분담
 
+
 <table>
   <tr>
-    <th>GitHub</th>
-    <th>이름</th>
-    <th>역할</th>
+    <!-- 이름 (링크) -->
+    <td align="center">
+      <a href="https://github.com/imewuzin"><strong>임유진</strong></a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/dlacowns21"><strong>임채준</strong></a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Minkyoungg0"><strong>문민경</strong></a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Gill010147"><strong>황병길</strong></a>
+    </td>
   </tr>
   <tr>
+    <!-- 프로필 사진 -->
     <td align="center">
-      <a href="https://github.com/imewuzin">
-        <img src="https://github.com/imewuzin.png" width="80" height="80" alt="userA"/>
-      </a>
+      <img src="https://github.com/imewuzin.png" width="100"/>
     </td>
-    <td align="center">임유진</td>
-    <td>PPT, Elasticsearch 자료 정리</td>
+    <td align="center">
+      <img src="https://github.com/dlacowns21.png" width="100"/>
+    </td>
+    <td align="center">
+      <img src="https://github.com/Minkyoungg0.png" width="100"/>
+    </td>
+    <td align="center">
+      <img src="https://github.com/Gill010147.png" width="100"/>
+    </td>
   </tr>
   <tr>
+    <!-- 역할 -->
     <td align="center">
-      <a href="https://github.com/dlacowns21">
-        <img src="https://github.com/dlacowns21.png" width="80" height="80" alt="userB"/>
-      </a>
+      PPT, Elasticsearch 자료 정리
     </td>
-    <td align="center">임채준</td>
-    <td>ELK 실험 환경 구성 및 로그 분석</td>
-  </tr>
-  <tr>
     <td align="center">
-      <a href="https://github.com/Minkyoungg0">
-        <img src="https://github.com/Minkyoungg0.png" width="80" height="80" alt="userC"/>
-      </a>
+      ELK 실험 환경 구성 및 로그 분석
     </td>
-    <td align="center">문민경</td>
-    <td>EFK 실험 환경 구성 및 성능 측정</td>
-  </tr>
-  <tr>
     <td align="center">
-      <a href="https://github.com/Gill010147">
-        <img src="https://github.com/Gill010147.png" width="80" height="80" alt="userD"/>
-      </a>
+      EFK 실험 환경 구성 및 성능 측정
     </td>
-    <td align="center">황병길</td>
-    <td>파이프라인 성능비교, 결과 정리</td>
+    <td align="center">
+      파이프라인 성능비교, 결과 정리
+    </td>
   </tr>
 </table>
 
@@ -124,7 +131,7 @@
 
 ## 🧑‍💻 실험 결과물 예시
 
-- [발표 PPT 링크](your-ppt-link.pdf)  
+- [발표 PPT 링크](./FISA_1차 기술세미나_ELKvsEFK.pptx)  
 - 실시간 로그 인덱스 캡처, metricbeat 대시보드 샘플 등 첨부
 
 ---
@@ -161,6 +168,7 @@
 > 해당 세션에서는 구성 중 발생한 다양한 문제들 (ex. 권한 오류, mount 오류 등)에 대한 해결 방법이 포함되어 있습니다.
 
 > 👉 자세한 내용은 발표 자료(PPT)를 참고하세요.
+
 
 ---
 
