@@ -131,7 +131,10 @@
 
 ## 🧑‍💻 실험 결과물 예시
 
-- [발표 PPT 링크](./FISA_1차 기술세미나_ELKvsEFK.pptx)  
+- <a href="./FISA_1차 기술세미나_ELKvsEFK.pptx" download>
+  발표 PPT 링크
+</a>
+
 - 실시간 로그 인덱스 캡처, metricbeat 대시보드 샘플 등 첨부
 
 ---
