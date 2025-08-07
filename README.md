@@ -18,8 +18,8 @@
   </tr>
   <tr>
     <td align="center">
-      <a href="https://github.com/userA">
-        <img src="https://github.com/userA.png" width="80" height="80" alt="userA"/>
+      <a href="https://github.com/imewuzin">
+        <img src="https://github.com/imewuzin.png" width="80" height="80" alt="userA"/>
       </a>
     </td>
     <td align="center">임유진</td>
@@ -27,8 +27,8 @@
   </tr>
   <tr>
     <td align="center">
-      <a href="https://github.com/userB">
-        <img src="https://github.com/userB.png" width="80" height="80" alt="userB"/>
+      <a href="https://github.com/dlacowns21">
+        <img src="https://github.com/dlacowns21.png" width="80" height="80" alt="userB"/>
       </a>
     </td>
     <td align="center">임채준</td>
@@ -36,8 +36,8 @@
   </tr>
   <tr>
     <td align="center">
-      <a href="https://github.com/userC">
-        <img src="https://github.com/userC.png" width="80" height="80" alt="userC"/>
+      <a href="https://github.com/Minkyoungg0">
+        <img src="https://github.com/Minkyoungg0.png" width="80" height="80" alt="userC"/>
       </a>
     </td>
     <td align="center">문민경</td>
@@ -45,8 +45,8 @@
   </tr>
   <tr>
     <td align="center">
-      <a href="https://github.com/userD">
-        <img src="https://github.com/userD.png" width="80" height="80" alt="userD"/>
+      <a href="https://github.com/Gill010147">
+        <img src="https://github.com/Gill010147.png" width="80" height="80" alt="userD"/>
       </a>
     </td>
     <td align="center">황병길</td>
@@ -64,7 +64,7 @@
 |---------------|-----------|---------------------|
 | Filebeat      | 8.13.4    | 로그 수집 (ELK)     |
 | Logstash      | 8.13.4    | 데이터 가공/전송    |
-| Fluentd       | -         | 데이터 가공/전송(EFK) |
+| Fluentd       | 1.16.3    | 데이터 가공/전송(EFK) |
 | Elasticsearch | 8.13.4    | 로그 저장/검색      |
 | Kibana        | 8.13.4    | 로그 시각화         |
 | Metricbeat    | 8.13.4    | 시스템 성능 측정    |
