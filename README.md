@@ -4,9 +4,36 @@
 
 ## 💡 프로젝트 소개
 
-이 프로젝트는 ELK(Elasticsearch, Logstash, Kibana)와 EFK(Elasticsearch, Fluentd, Kibana) 기반의 로그 파이프라인을 구축·운영하여  
-실제 서비스 환경에서 로그와 시스템 성능 모니터링을 어떻게 최적화할 수 있는지 실험한 결과를 정리한 것입니다.  
-대용량 부하 생성(JMeter), 실시간 로그 수집 및 시각화, 그리고 두 파이프라인의 성능 비교 결과까지 모두 포함합니다.
+**Elasticsearch의 동작 원리**와 **ELK·EFK의 핵심 차이**를 비교·분석하고, <br>
+**로그 파이프라인을 직접 구축**하여 활용 방안을 탐구했습니다.<br>
+또한 **CPU·메모리·디스크 사용량을 측정**해 두 스택의 **성능 차이**를 수치로 확인했습니다.
+
+<br/>
+
+## 🎯 주제 선정 이유
+
+**많은 기업들**이 **ELK 스택을 사용**하며, **EFK도 함께 언급**됩니다. <br>
+ELK와 EFK는 모두 로그 분석에 사용되지만, 수집 도구의 차이로 특징과 장단점이 다릅니다.<br>
+이에 **두 스택을 직접 구현·비교**하여, **환경별 최적 선택 기준**과 **효율적인 활용 방안**을 도출하고자 했습니다.
+
+<br/>
+
+## 🏆 목표
+
+**ELK·EFK의 특징과 장단점**을 명확히 이해해 상황에 맞게 선택할 수 있는 역량을 기르는 것,
+또한 **로그 파이프라인 구축**과 **내부 설정 이해**를 통해 **실제 서비스에서 효과적으로 활용**할 수 있도록 하는 것입니다.
+
+<br/>
+
+## 🛠️ 기술 스택
+
+| 구분        | 사용 기술 |
+|-------------|-----------|
+| ELK Stack   | Elasticsearch 8.13.4, Filebeat 8.13.4, Logstash 8.13.4, Kibana 8.13.4 |
+| EFK Stack   | Elasticsearch 8.13.4, Fluentd 1.16.3, Kibana 8.13.4 |
+| Monitoring  | Metricbeat 8.13.4 |
+| Application | Spring Boot 3.5.3 |
+| Test Tool   | JMeter 5.6.3 |
 
 <br/>
 
@@ -67,16 +94,13 @@
 
 ![구성도 예시 삽입](your-architecture-diagram-url.png)
 
-| 구성요소      | 버전      | 역할                |
-|---------------|-----------|---------------------|
-| Filebeat      | 8.13.4    | 로그 수집 (ELK)     |
-| Logstash      | 8.13.4    | 데이터 가공/전송    |
-| Fluentd       | 1.16.3    | 데이터 가공/전송(EFK) |
-| Elasticsearch | 8.13.4    | 로그 저장/검색      |
-| Kibana        | 8.13.4    | 로그 시각화         |
-| Metricbeat    | 8.13.4    | 시스템 성능 측정    |
-| Spring Boot   | 3.5.3     | API/로그 생성       |
-| JMeter        | 5.6.3     | 부하 생성           |
+| 구분        | 사용 기술 |
+|-------------|-----------|
+| ELK Stack   | Elasticsearch 8.13.4, Filebeat 8.13.4, Logstash 8.13.4, Kibana 8.13.4 |
+| EFK Stack   | Elasticsearch 8.13.4, Fluentd 1.16.3, Kibana 8.13.4 |
+| Monitoring  | Metricbeat 8.13.4 |
+| Application | Spring Boot 3.5.3 |
+| Test Tool   | JMeter 5.6.3 |
 
 <br/>
 
