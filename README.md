@@ -1,12 +1,16 @@
 # 🚀 대용량 로그 수집/분석 ELK vs EFK 파이프라인 프로젝트
 
 ![image](./first_page.png)
+**ppt 자료**
+<a href="./FISA_1차 기술세미나_ELKvsEFK.pptx" download>
+  ppt 자료
+</a>
+## 💡 프로젝트 개요
 
-## 💡 프로젝트 소개
-
-이 프로젝트는 ELK(Elasticsearch, Logstash, Kibana)와 EFK(Elasticsearch, Fluentd, Kibana) 기반의 로그 파이프라인을 구축·운영하여  
-실제 서비스 환경에서 로그와 시스템 성능 모니터링을 어떻게 최적화할 수 있는지 실험한 결과를 정리한 것입니다.  
-대용량 부하 생성(JMeter), 실시간 로그 수집 및 시각화, 그리고 두 파이프라인의 성능 비교 결과까지 모두 포함합니다.
+많은 기업들이 로그 분석을 위해 ELK 스택을 활용하고 있으며, 이와 유사하게 EFK 스택도 함께 언급됩니다. 두 스택은 모두 로그 분석을 목적으로 하지만,<br>
+Logstash와 Fluentd라는 수집 도구의 차이가 있습니다. <br>
+본 프로젝트에서는 ELK와 EFK를 직접 구현하고, 성능·구성·활용성 측면에서 비교 분석하였습니다. 이를 통해 실제 도입 시 고려해야 할 요소와 <br>
+환경별 효율적인 활용 방안을 도출하고자 하였습니다.
 
 <br/>
 
@@ -63,9 +67,7 @@
 
 <br/>
 
-## 🛠️ 전체 아키텍처
-
-![구성도 예시 삽입](your-architecture-diagram-url.png)
+## 🛠️ 기술 스택
 
 | 구성요소      | 버전      | 역할                |
 |---------------|-----------|---------------------|
@@ -86,10 +88,27 @@
 - **로그·ELK·Metricbeat:** Docker Compose로 통합 관리
 - **Spring Boot:** Ubuntu에 직접 기동  
 - **부하테스트:** JMeter (더미 CSV데이터로 80만 건 POST 요청)
-
-
-- Spring Boot 실행 후 부하 실행:  
+- **Spring Boot 실행 후 부하 실행:**  
   JMeter 스레드 수/루프/램프업 등 실전 설정 info 제공
+
+<br/>
+
+## 📂 디렉토리 구성
+```
+
+├── docker-compose.yml
+├── logstash/
+│ ├── config/
+│ └── pipeline/
+├── filebeat/
+│ └── filebeat.yml
+├── springboot/ (jar/소스)
+├── jmeter/ (테스트 시나리오, 더미 CSV)
+├── 발표자료/
+├── metricbeat/
+│ └── metricbeat.yml
+└── README.md
+```
 
 <br/>
 
@@ -135,7 +154,25 @@
   발표 PPT 링크
 </a>
 
-- 실시간 로그 인덱스 캡처, metricbeat 대시보드 샘플 등 첨부
+<img width="842" height="460" alt="image" src="https://github.com/user-attachments/assets/117409be-50af-47cd-8f66-0c355786f168" />
+<img width="836" height="431" alt="image" src="https://github.com/user-attachments/assets/b42a0911-dd5c-4a4f-bdcd-49b445300b44" />
+<img width="828" height="216" alt="image" src="https://github.com/user-attachments/assets/092cc077-3a07-47b9-a2ff-d416b60bc370" />
+<img width="842" height="249" alt="image" src="https://github.com/user-attachments/assets/cea3e046-314e-4f99-93e2-7f3412a01eca" />
+<img width="843" height="442" alt="image" src="https://github.com/user-attachments/assets/c0f4292f-f653-4d14-9840-122ae063ec40" />
+<img width="822" height="387" alt="image" src="https://github.com/user-attachments/assets/a817c249-0d96-4b84-92ef-31ad030ce031" />
+
+| 화면 설명                             | 미리보기                      |
+| --------------------------------- | ------------------------- |
+| 🌐 **CPU-ELK**       | 📌 ![CPU-ELK](./image/image%20(1).png)  |
+| 📂 **CPU-EFK** | 📌 ![CPU-EFK](./image/image%20(2).png) |
+| ❌ **Memory-ELK**  | 📌  ![Memory-ELK](./image/image%20(3).png)    |
+| 🔎 **Memory-EFK**   | 📌  ![Memory-EFK](./image/image%20(4).png)      |
+| 🏠 **Disk-ELK**        | 📌 ![Disk-ELK](./image/image%20(5).png)        |
+| ⚠️ **Disk-EFK**         | 📌 ![Disk-EFK](./image/image%20(7).png)          |
+
+
+
+
 
 ---
 
@@ -145,39 +182,18 @@
 - **EFK**는 경량 실시간 로그수집이나 컨테이너/IoT/스타트업·SMB 환경에 적합
 - 두 파이프라인 모두 현대 DevOps/Observability 인프라의 핵심
 
-```
-
-## 📂 디렉토리 구성
-
-├── docker-compose.yml
-├── logstash/
-│ ├── config/
-│ └── pipeline/
-├── filebeat/
-│ └── filebeat.yml
-├── springboot/ (jar/소스)
-├── jmeter/ (테스트 시나리오, 더미 CSV)
-├── 발표자료/
-├── metricbeat/
-│ └── metricbeat.yml
-└── README.md
-
-
-```
 
 
 ## 🛠 트러블슈팅 (Troubleshooting)
 
 > 해당 세션에서는 구성 중 발생한 다양한 문제들 (ex. 권한 오류, mount 오류 등)에 대한 해결 방법이 포함되어 있습니다.
 
-> 👉 자세한 내용은 발표 자료(PPT)를 참고하세요.
-
 
 ---
 
 ## 📎 참고 자료
 
-- [Elastic 공식 문서](https://www.elastic.co/guide/index.html)
+- [Elastic 가이드북](https://esbook.kimjmin.net/)
 - [Fluentd 공식 문서](https://docs.fluentd.org/)
 - [Filebeat 공식 문서](https://www.elastic.co/beats/filebeat)
 
