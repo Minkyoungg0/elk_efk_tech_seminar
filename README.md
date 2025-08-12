@@ -154,23 +154,14 @@ Logstash와 Fluentd라는 수집 도구의 차이가 있습니다. <br>
   발표 PPT 링크
 </a>
 
-<img width="842" height="460" alt="image" src="https://github.com/user-attachments/assets/117409be-50af-47cd-8f66-0c355786f168" />
-<img width="836" height="431" alt="image" src="https://github.com/user-attachments/assets/b42a0911-dd5c-4a4f-bdcd-49b445300b44" />
-<img width="828" height="216" alt="image" src="https://github.com/user-attachments/assets/092cc077-3a07-47b9-a2ff-d416b60bc370" />
-<img width="842" height="249" alt="image" src="https://github.com/user-attachments/assets/cea3e046-314e-4f99-93e2-7f3412a01eca" />
-<img width="843" height="442" alt="image" src="https://github.com/user-attachments/assets/c0f4292f-f653-4d14-9840-122ae063ec40" />
-<img width="822" height="387" alt="image" src="https://github.com/user-attachments/assets/a817c249-0d96-4b84-92ef-31ad030ce031" />
-
 | 화면 설명                             | 미리보기                      |
 | --------------------------------- | ------------------------- |
-| 🌐 **CPU-ELK**       | 📌 ![CPU-ELK](./image/image%20(1).png)  |
-| 📂 **CPU-EFK** | 📌 ![CPU-EFK](./image/image%20(2).png) |
-| ❌ **Memory-ELK**  | 📌  ![Memory-ELK](./image/image%20(3).png)    |
-| 🔎 **Memory-EFK**   | 📌  ![Memory-EFK](./image/image%20(4).png)      |
-| 🏠 **Disk-ELK**        | 📌 ![Disk-ELK](./image/image%20(5).png)        |
-| ⚠️ **Disk-EFK**         | 📌 ![Disk-EFK](./image/image%20(7).png)          |
-
-
+| 🌐 **CPU-ELK**       | 📌 ![CPU-ELK](https://github.com/user-attachments/assets/117409be-50af-47cd-8f66-0c355786f168)  |
+| 📂 **CPU-EFK** | 📌 ![CPU-EFK](https://github.com/user-attachments/assets/b42a0911-dd5c-4a4f-bdcd-49b445300b44) |
+| ❌ **Memory-ELK**  | 📌  ![Memory-ELK](https://github.com/user-attachments/assets/092cc077-3a07-47b9-a2ff-d416b60bc370)    |
+| 🔎 **Memory-EFK**   | 📌  ![Memory-EFK](https://github.com/user-attachments/assets/cea3e046-314e-4f99-93e2-7f3412a01eca)      |
+| 🏠 **Disk-ELK**        | 📌 ![Disk-ELK](https://github.com/user-attachments/assets/c0f4292f-f653-4d14-9840-122ae063ec40)        |
+| ⚠️ **Disk-EFK**         | 📌 ![Disk-EFK](https://github.com/user-attachments/assets/a817c249-0d96-4b84-92ef-31ad030ce031)          |
 
 
 
@@ -181,7 +172,6 @@ Logstash와 Fluentd라는 수집 도구의 차이가 있습니다. <br>
 - **ELK**는 복잡한 로그처리, 파싱, 대시보드가 필요한 엔터프라이즈 서비스에 적합
 - **EFK**는 경량 실시간 로그수집이나 컨테이너/IoT/스타트업·SMB 환경에 적합
 - 두 파이프라인 모두 현대 DevOps/Observability 인프라의 핵심
-
 
 
 ## 🛠 트러블슈팅 (Troubleshooting)
