@@ -199,8 +199,113 @@ ELK와 EFK는 모두 로그 분석에 사용되지만, 수집 도구의 차이�
 
 ## 🛠 트러블슈팅 (Troubleshooting)
 
-> 해당 세션에서는 구성 중 발생한 다양한 문제들 (ex. 권한 오류, mount 오류 등)에 대한 해결 방법이 포함되어 있습니다.
+## 1. Metricbeat 권한 오류 ❌➡️✅
 
+### 🔍 문제 상황
+```bash
+ERROR: Config file must be owned by the user identifier (uid=0) or root
+```
+- 원인: Docker 컨테이너 내에서 metricbeat.yml 파일 소유자가 root가 아님
+- 증상: Metricbeat 컨테이너가 시작과 동시에 종료됨
+- 발생 환경: Ubuntu + Docker Compose 환경
+
+### 💡 해결 과정
+권한 확인
+```bash
+ls -la metricbeat/metricbeat.yml
+# -rw-r--r-- 1 ubuntu ubuntu 2048 Aug 15 16:30 metricbeat.yml
+```
+소유자 변경
+
+```bash
+sudo chown root:root ./metricbeat/metricbeat.yml
+sudo chmod 0644 ./metricbeat/metricbeat.yml
+```
+재시작 및 확인
+```bash
+sudo docker-compose restart metricbeat
+sudo docker logs -f efk-stack-metricbeat-1
+```
+### 📚 학습한 점
+- Docker 컨테이너의 보안 정책: root가 아닌 사용자로 실행되는 컨테이너는 보안상 제한된 권한을 가짐
+- Elastic Stack 구성요소들이 설정 파일 권한에 대해 엄격한 검사를 수행함
+## 2. Fluentd Elasticsearch 플러그인 버전 충돌 ❌➡️✅
+```bash
+Unknown output plugin 'elasticsearch'. Run 'gem search -rd fluent-plugin' to find plugins
+```
+- 원인: Elasticsearch 9.1.0 버전과 fluent-plugin-elasticsearch 간 호환성 문제
+- 증상: Fluentd가 Elasticsearch로 데이터 전송 실패
+- 영향: EFK 파이프라인 전체 동작 불가
+### 💡 해결 과정
+1. 컨테이너 내부 진입하여 문제 진단
+```bash
+sudo docker exec -u root -it efk-stack-fluentd-1 sh
+fluent-gem list | grep elastic
+# elasticsearch (9.1.0) ← 문제 버전 확인
+```
+2. 호환되지 않는 버전 제거
+```bash
+gem uninstall elasticsearch -v '9.1.0' -aIx
+gem uninstall elasticsearch-api -v '9.1.0' -aIx
+gem uninstall elasticsearch-transport -v '9.1.0' -aIx
+```
+3. 호환 가능한 버전 설치
+```bash
+gem install elasticsearch -v '7.1.0' --no-document
+gem install elasticsearch-api -v '7.1.0' --no-document
+gem install elasticsearch-transport -v '7.1.0' --no-document
+gem install fluent-plugin-elasticsearch -v '6.0.0' --no-document
+```
+4. 재시작 및 검증
+```bash
+exit
+sudo docker restart efk-stack-fluentd-1
+# 로그 확인으로 정상 동작 검증
+curl -X GET "http://localhost:9200/fluentd-*/_count?pretty"
+``` 
+### 📚 학습한 점
+- 의존성 관리의 중요성: 오픈소스 생태계에서 버전 호환성 확인이 필수
+- 컨테이너 환경에서의 디버깅: 실행 중인 컨테이너 내부 접근을 통한 실시간 문제 해결
+- Ruby Gem 관리: -aIx 옵션을 통한 강제 삭제 및 --no-document 옵션으로 설치 속도 개선
+
+<details>
+  <summary>해보고 싶은 트러블 슈팅</summary>
+  
+## 3. 데이터 수집량 차이 분석 📊
+### 🔍 예상과 다른 결과
+- 계획: JMeter로 80만건 POST 요청 → Elasticsearch에 80만건 저장
+
+- 실제 결과: 548,427건만 저장됨 (약 68.5%)
+
+- 차이 분석이 필요했던 이유: 성능 비교의 정확성을 위해
+
+### 💡 분석 과정
+1. 데이터 흐름 추적
+
+- JMeter → Spring Boot → 로그파일 → Filebeat/Fluentd → Logstash/Fluentd → Elasticsearch
+
+- 각 단계별 데이터 손실 지점 파악
+
+2. 원인 분석
+
+- 버퍼링 설정: Logstash/Fluentd의 배치 처리로 인한 지연
+
+- 네트워크 처리량: 대량 데이터 처리 시 일시적 병목 현상
+
+- Elasticsearch 인덱싱 속도: 동시 인덱싱 한계
+
+3. 개선 방안 도출
+
+### Logstash 설정 최적화 예시
+```bash
+pipeline.batch.size: 1000
+pipeline.batch.delay: 50
+```
+### 📚 학습한 점
+- 실시간 처리의 한계: 대용량 데이터 처리 시 버퍼링과 배치 처리 필요성
+
+- 모니터링의 중요성: 실제 처리량과 예상 처리량 간의 차이를 지속적으로 모니터링
+</details>
 
 ---
 
