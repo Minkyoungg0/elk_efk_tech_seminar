@@ -1,43 +1,33 @@
-# 🚀 대용량 로그 수집/분석 ELK vs EFK 파이프라인 프로젝트
+# 대용량 로그 수집/분석 ELK vs EFK 파이프라인 프로젝트
 
 ![image](./first_page.png)
 
-## 💡 프로젝트 소개
 
-**Elasticsearch의 동작 원리**와 **ELK·EFK의 핵심 차이**를 비교·분석하고, <br>
+> **Elasticsearch의 동작 원리**와 **ELK·EFK의 핵심 차이**를 비교·분석하고, <br>
 **로그 파이프라인을 직접 구축**하여 활용 방안을 탐구했습니다.<br>
 또한 **CPU·메모리·디스크 사용량을 측정**해 두 스택의 **성능 차이**를 수치로 확인했습니다.
 
 <br/>
 
-## 🎯 주제 선정 이유
+## 주제 선정 이유
 
 **많은 기업들**이 **ELK 스택을 사용**하며, **EFK도 함께 언급**됩니다. <br>
 ELK와 EFK는 모두 로그 분석에 사용되지만, 수집 도구의 차이로 특징과 장단점이 다릅니다.<br>
 이에 **두 스택을 직접 구현·비교**하여, **환경별 최적 선택 기준**과 **효율적인 활용 방안**을 도출하고자 했습니다.
 
-<br/>
-
-## 🏆 목표
-
-**ELK·EFK의 특징과 장단점**을 명확히 이해해 상황에 맞게 선택할 수 있는 역량을 기르는 것,<br>
-또한 **로그 파이프라인 구축**과 **내부 설정 이해**를 통해 **실제 서비스에서 효과적으로 활용**할 수 있도록 하는 것입니다.
+- [DB-Engines Ranking of Search Engines 1위 Elasticsearch](https://db-engines.com/en/ranking/search+engine)
+- [여기어때 기술블로그 - EKS 환경에서의 EFK 도입기](https://techblog.gccompany.co.kr/eks-%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C%EC%9D%98-efk-%EB%8F%84%EC%9E%85%EA%B8%B0-e8a92695e991)
+- [Kibana 사용 기업 목록](https://www.codenary.co.kr/techstack/detail/kibana)
 
 <br/>
 
-## 🛠️ 기술 스택
+## 목표
 
-| 구분        | 사용 기술 |
-|-------------|-----------|
-| ELK Stack   | Elasticsearch 8.13.4, Filebeat 8.13.4, Logstash 8.13.4, Kibana 8.13.4 |
-| EFK Stack   | Elasticsearch 8.13.4, Fluentd 1.16.3, Kibana 8.13.4 |
-| Monitoring  | Metricbeat 8.13.4 |
-| Application | Spring Boot 3.5.3 |
-| Test Tool   | JMeter 5.6.3 |
+기업 환경에서 표준적으로 활용되는 ELK와, Kubernetes 친화적인 EFK를 동일 조건에서 구축·측정해 수집기(Fluentd/Logstash) 특성, 자원 사용량, 운영 복잡도 관점에서 **환경별 최적 선택 기준과 효율적 운영 방안**을 도출하는 것입니다.
 
 <br/>
 
-## 👨‍👩‍👧 팀 역할 분담
+## 팀 역할 분담
 
 
 <table>
@@ -90,12 +80,33 @@ ELK와 EFK는 모두 로그 분석에 사용되지만, 수집 도구의 차이�
 
 <br/>
 
+## 기술 스택
+
+![infra](./infra.png)
+
+
+
+<br/>
+
 ## 실험 시나리오
-1. JMeter에서 thread 수: 100개, Ramp-up: 60초, Loop Count: 8000회 설정을 통해 총 80만건의 로그데이터 생성
-2. Spring Boot App에서 POST 메소드를 통해 각 파이프라인에 80만건의 로그데이터를 JSON 형식으로 전송
-3. Filebeat & Logstash와 Fluentd가 각각의 설정을 기반으로 Elasticsearch에 데이터 가공/필터링 및 적재
-4. Metricbeat가 각 파이프라인이 실행되는 동안 리소스(Memory, CPU 등) 사용율 측정
-5. Kibana를 통해 Metricbeat가 수집한 각 파이프라인의 성능 측정 데이터 시각화
+
+①  **부하 생성**  
+- 도구 : `JMeter 5.6.3`  
+- 설정 : `threads=100`, `ramp-up=60s`, `loop=8000` → **총 800,000 req**
+
+② **애플리케이션 수집 엔드포인트**  
+- `Spring Boot 3.5.3` 가 `POST /logs` 로 **JSON 로그** 수신
+
+③ **두 파이프라인으로 전달**  
+- **ELK** : `Filebeat → Logstash(filter/grok,batch) → Elasticsearch(logs-elk-*)`  
+- **EFK** : `Fluentd(in_http→buffer→out_es) → Elasticsearch(logs-efk-*)`
+
+④ **리소스 모니터링**  
+- `Metricbeat 8.13.4` 가 각 파이프라인의 **CPU/Memory/Disk** 수집
+
+⑤ **시각화**  
+- `Kibana 8.13.4` 대시보드로 **성능 측정 데이터** 시각화
+
 
 <br/>
 
@@ -111,43 +122,37 @@ ELK와 EFK는 모두 로그 분석에 사용되지만, 수집 도구의 차이�
 
 성능 측정 실험은 Metricbeat를 사용하여 각 파이프라인에 총 80만건의 로그데이터를 수집하는 과정을 3번 거쳐서 성능 데이터 수집 및 분석
 
-1. CPU 사용량
-  - ELK Stack
-  ![CPU-ELK](https://github.com/user-attachments/assets/117409be-50af-47cd-8f66-0c355786f168)
-    - 데이터를 수집하는 시점에 CPU 사용량이 약 80%까지 급격히 증가
-    - 데이터를 처리하는 동안 80%의 CPU 사용량 유지
-    - 데이터 처리 완료 후 CPU 사용량 급격히 감소
 
-  - EFK Stack
-  ![CPU-EFK](https://github.com/user-attachments/assets/b42a0911-dd5c-4a4f-bdcd-49b445300b44)
-    - 각 실험들의 CPU 사용량 피크를 보면 약 48%로 상대적으로 낮음
-    - 지속시간 또한 짧게 형성되어 있음
+### 1) CPU 사용량
 
-2. Memory 사용량
-  - ELK Stack
-  ![Memory-ELK](https://github.com/user-attachments/assets/092cc077-3a07-47b9-a2ff-d416b60bc370)
-    - 총 8GB 중 7.2GB의 메모리를 사용하며 약 94%의 메모리 점유율을 확인할 수 있음
+| **ELK Stack**                                                                                          | **EFK Stack**                                                                               |
+| ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| ![CPU-ELK](https://github.com/user-attachments/assets/117409be-50af-47cd-8f66-0c355786f168)            | ![CPU-EFK](https://github.com/user-attachments/assets/b42a0911-dd5c-4a4f-bdcd-49b445300b44) |
+| <ul><li>수집 시작 시 \*\*\~80%\*\*까지 급격히 상승</li><li>처리 구간 동안 **높은 사용률 유지**</li><li>처리 완료 후 **급감**</li></ul> | <ul><li>피크 \*\*\~48%\*\*로 상대적으로 낮음</li><li>**지속시간 짧음**, 빠르게 안정화</li></ul>                   |
 
-  - EFK Stack
-  ![Memory-EFK](https://github.com/user-attachments/assets/cea3e046-314e-4f99-93e2-7f3412a01eca)
-    - 총 8GB 중 6GB의 메모리를 사용하며 약 80%의 메모리 점유율을 확인할 수 있음
+---
 
-3. Disk 사용량
-  - ELK Stack
-  ![Disk-ELK](https://github.com/user-attachments/assets/c0f4292f-f653-4d14-9840-122ae063ec40) 
-    - 실험 시작과 동시에 디스크 사용량이 약 15%까지 빠르게 도달 
-    - 실험을 반복할수록 점진적으로 디스크 사용량이 조금씩 증가
+### 2) Memory 사용량
 
-  - EFK Stack
-  ![Disk-EFK](https://github.com/user-attachments/assets/a817c249-0d96-4b84-92ef-31ad030ce031)
-    - 실험을 시작하고 디스크 사용량이 약 8% 정도 되는 것을 확인할 수 있음
-    - 디스크 사용량이 안정적으로 유지되는 것을 볼 수 있음
+| **ELK Stack**                                                                                  | **EFK Stack**                                                                                  |
+| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| ![Memory-ELK](https://github.com/user-attachments/assets/092cc077-3a07-47b9-a2ff-d416b60bc370) | ![Memory-EFK](https://github.com/user-attachments/assets/cea3e046-314e-4f99-93e2-7f3412a01eca) |
+| <ul><li>**7.2GB / 8GB (약 94%)** 사용</li><li>처리 구간 전반에 **높은 점유율**</li></ul>                      | <ul><li>**6.0GB / 8GB (약 80%)** 사용</li><li>상대적으로 **안정적 메모리 소비**</li></ul>                      |
+
+---
+
+### 3) Disk 사용량
+
+| **ELK Stack**                                                                                | **EFK Stack**                                                                                |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| ![Disk-ELK](https://github.com/user-attachments/assets/c0f4292f-f653-4d14-9840-122ae063ec40) | ![Disk-EFK](https://github.com/user-attachments/assets/a817c249-0d96-4b84-92ef-31ad030ce031) |
+| <ul><li>시작 직후 \*\*\~15%\*\*까지 빠르게 도달</li><li>실험 반복 시 **점진적 증가**</li></ul>                    | <ul><li>시작 시 **\~8%** 수준</li><li>이후 **안정적 유지**</li></ul>                                     |
 
 
 
 <br/>
 
-## 🔎 인사이트
+## 인사이트
 
 1. **리소스 소비 구조 차이**
    - ELK 스택의 Logstash는 JVM 기반으로 동작하여 **CPU와 메모리를 많이 소모**하는 반면, Fluentd는 C와 Ruby 기반으로 구현되어 상대적으로 가볍게 실행
@@ -177,115 +182,188 @@ ELK와 EFK는 모두 로그 분석에 사용되지만, 수집 도구의 차이�
 
 <br/>
 
-## 🛠 트러블슈팅 (Troubleshooting)
 
-## 1. Metricbeat 권한 오류 ❌➡️✅
 
-### 🔍 문제 상황
+
+## 트러블슈팅 
+
+<details>
+<summary><strong>1) Metricbeat 권한 오류</strong></summary>
+
+> **요약**: Metricbeat 컨테이너가 설정 파일 권한 검사에 실패하여 즉시 종료. 설정 파일의 소유자/퍼미션을 수정해 해결.
+
+**증상**
 ```bash
 ERROR: Config file must be owned by the user identifier (uid=0) or root
 ```
-- 원인: Docker 컨테이너 내에서 metricbeat.yml 파일 소유자가 root가 아님
-- 증상: Metricbeat 컨테이너가 시작과 동시에 종료됨
-- 발생 환경: Ubuntu + Docker Compose 환경
 
-### 💡 해결 과정
-권한 확인
+**원인**
+- `metricbeat.yml`의 소유자가 root(uid=0)가 아님
+- Elastic Beats는 보안상 설정 파일의 소유자/권한을 엄격히 검사
+
+**환경**
+- Ubuntu + Docker Compose
+
+**진단**
 ```bash
 ls -la metricbeat/metricbeat.yml
 # -rw-r--r-- 1 ubuntu ubuntu 2048 Aug 15 16:30 metricbeat.yml
 ```
-소유자 변경
 
+**해결**
 ```bash
 sudo chown root:root ./metricbeat/metricbeat.yml
 sudo chmod 0644 ./metricbeat/metricbeat.yml
-```
-재시작 및 확인
-```bash
 sudo docker-compose restart metricbeat
-sudo docker logs -f efk-stack-metricbeat-1
 ```
-### 📚 학습한 점
-- Docker 컨테이너의 보안 정책: root가 아닌 사용자로 실행되는 컨테이너는 보안상 제한된 권한을 가짐
-- Elastic Stack 구성요소들이 설정 파일 권한에 대해 엄격한 검사를 수행함
-## 2. Fluentd Elasticsearch 플러그인 버전 충돌 ❌➡️✅
+
+**검증**
+```bash
+sudo docker logs -f efk-stack-metricbeat-1
+# 정상 기동 및 수집 로그 확인
+```
+
+**메모**
+- 마운트된 호스트 파일 권한이 컨테이너 내부보다 우선 적용됨
+- 임시로 `user: root` 실행 가능하나 보안상 권장되지 않음(소유자 교정 권장)
+
+</details>
+
+<details>
+<summary><strong>2) Fluentd Elasticsearch 플러그인 버전 충돌</strong></summary>
+
+> **요약**: Fluentd가 ES 플러그인을 로드하지 못함. 호환되지 않는 ruby gem 버전을 제거하고 호환 버전으로 고정 설치하여 해결.
+
+**증상**
 ```bash
 Unknown output plugin 'elasticsearch'. Run 'gem search -rd fluent-plugin' to find plugins
 ```
-- 원인: Elasticsearch 9.1.0 버전과 fluent-plugin-elasticsearch 간 호환성 문제
-- 증상: Fluentd가 Elasticsearch로 데이터 전송 실패
-- 영향: EFK 파이프라인 전체 동작 불가
-### 💡 해결 과정
-1. 컨테이너 내부 진입하여 문제 진단
+
+**원인**
+- `elasticsearch` / `elasticsearch-api` / `elasticsearch-transport` gem 버전이 `fluent-plugin-elasticsearch`와 호환되지 않음
+
+**진단**
 ```bash
 sudo docker exec -u root -it efk-stack-fluentd-1 sh
 fluent-gem list | grep elastic
 # elasticsearch (9.1.0) ← 문제 버전 확인
 ```
-2. 호환되지 않는 버전 제거
+
+**해결**
 ```bash
+# 충돌 버전 제거
 gem uninstall elasticsearch -v '9.1.0' -aIx
 gem uninstall elasticsearch-api -v '9.1.0' -aIx
 gem uninstall elasticsearch-transport -v '9.1.0' -aIx
-```
-3. 호환 가능한 버전 설치
-```bash
+
+# 호환 버전 설치(예시)
 gem install elasticsearch -v '7.1.0' --no-document
 gem install elasticsearch-api -v '7.1.0' --no-document
 gem install elasticsearch-transport -v '7.1.0' --no-document
 gem install fluent-plugin-elasticsearch -v '6.0.0' --no-document
-```
-4. 재시작 및 검증
-```bash
+
 exit
 sudo docker restart efk-stack-fluentd-1
-# 로그 확인으로 정상 동작 검증
+```
+
+**검증**
+```bash
 curl -X GET "http://localhost:9200/fluentd-*/_count?pretty"
-``` 
-### 📚 학습한 점
-- 의존성 관리의 중요성: 오픈소스 생태계에서 버전 호환성 확인이 필수
-- 컨테이너 환경에서의 디버깅: 실행 중인 컨테이너 내부 접근을 통한 실시간 문제 해결
-- Ruby Gem 관리: -aIx 옵션을 통한 강제 삭제 및 --no-document 옵션으로 설치 속도 개선
+# 색인 정상 여부 확인
+```
+
+**메모**
+- Dockerfile/이미지 빌드 시 gem 버전 고정으로 재현 방지
+- 가능하면 공식 Fluentd 이미지 + 검증된 플러그인 버전을 사용하여 운영 복잡도 축소
+
+</details>
 
 <details>
-  <summary>해보고 싶은 트러블 슈팅</summary>
-  
-## 3. 데이터 수집량 차이 분석 📊
-### 🔍 예상과 다른 결과
-- 계획: JMeter로 80만건 POST 요청 → Elasticsearch에 80만건 저장
+<summary><strong>3) 데이터 수집량 차이 분석</strong></summary>
 
-- 실제 결과: 548,427건만 저장됨 (약 68.5%)
+> **요약**: JMeter 80만 건 전송 대비 ES 저장 건수가 약 68.5%만 기록됨. 단계별 카운터를 수집해 손실 지점을 특정하고 버퍼·배치·인덱싱 파라미터를 조정.
 
-- 차이 분석이 필요했던 이유: 성능 비교의 정확성을 위해
+**관찰**
+- 계획: 800,000건 저장
+- 실제: 548,427건 저장 (약 68.5%)
 
-### 💡 분석 과정
-1. 데이터 흐름 추적
+**흐름**
+```mermaid
+sequenceDiagram
+  participant JM as JMeter
+  participant APP as Spring Boot
+  participant COL as Collector(Filebeat/Fluentd)
+  participant PROC as Processor(Logstash/Fluentd)
+  participant ES as Elasticsearch
 
-- JMeter → Spring Boot → 로그파일 → Filebeat/Fluentd → Logstash/Fluentd → Elasticsearch
+  JM->>APP: POST /logs (800k)
+  APP->>COL: write/forward log
+  COL->>PROC: ship in batches/buffers
+  PROC->>ES: bulk index
+  ES-->>PROC: ack
+```
 
-- 각 단계별 데이터 손실 지점 파악
+**분석 포인트**
+1. JMeter 송신 성공 수 ↔ App 수신/처리 수 비교
+2. Collector 큐/버퍼 잔량 및 Dropped 이벤트 확인
+3. Processor 배치/지연/재시도 설정 확인
+4. Elasticsearch bulk 응답 실패 항목(`errors=true`) 비율 및 유형 파악
 
-2. 원인 분석
-
-- 버퍼링 설정: Logstash/Fluentd의 배치 처리로 인한 지연
-
-- 네트워크 처리량: 대량 데이터 처리 시 일시적 병목 현상
-
-- Elasticsearch 인덱싱 속도: 동시 인덱싱 한계
-
-3. 개선 방안 도출
-
-### Logstash 설정 최적화 예시
-```bash
+**개선 가이드(예시)**
+- Logstash
+```yaml
+# logstash.yml
 pipeline.batch.size: 1000
 pipeline.batch.delay: 50
+# pipeline.workers: 2-4
+# queue.type: persisted
 ```
-### 📚 학습한 점
-- 실시간 처리의 한계: 대용량 데이터 처리 시 버퍼링과 배치 처리 필요성
 
-- 모니터링의 중요성: 실제 처리량과 예상 처리량 간의 차이를 지속적으로 모니터링
+- Filebeat (ES로 직접 출력 시)
+```yaml
+output.elasticsearch:
+  bulk_max_size: 2048
+  worker: 2
+  compression_level: 3
+```
+
+- Fluentd
+```conf
+<match **>
+  @type elasticsearch
+  host es
+  port 9200
+  include_tag_key true
+  <buffer>
+    @type file
+    path /fluentd/buffer/es
+    flush_interval 1s
+    chunk_limit_size 8m
+    queue_limit_length 256
+    retry_forever true
+  </buffer>
+</match>
+```
+
+- Elasticsearch 인덱싱 윈도우(대량 적재 중 한시적 완화, 완료 후 원복 권장)
+```bash
+PUT logs-bulk/_settings
+{
+  "index": {
+    "refresh_interval": "30s",
+    "number_of_replicas": 0
+  }
+}
+```
+
+**검증**
+- 단계별 카운터(수신/전달/성공/실패)를 로그·메트릭으로 남겨 손실 지점 수치화
+- 튜닝 전후 메트릭 비교로 개선 효과 확인
+
+**메모**
+- 튜닝값은 환경·자원·네트워크에 따라 다름. 작은 배치에서 시작해 점진적으로 올리는 방식이 안전
 </details>
+
 
 ---
 
