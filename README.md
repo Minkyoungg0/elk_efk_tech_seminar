@@ -77,10 +77,10 @@ ELK와 EFK는 모두 로그 분석에 사용되지만, 수집 도구의 차이�
       PPT, Elasticsearch 자료 정리
     </td>
     <td align="center">
-      ELK 실험 환경 구성 및 로그 분석
+      EFK 실험 환경 구성 및 로그 분석
     </td>
     <td align="center">
-      EFK 실험 환경 구성 및 성능 측정
+      ELK 실험 환경 구성 및 성능 측정
     </td>
     <td align="center">
       파이프라인 성능비교, 결과 정리
@@ -90,112 +90,92 @@ ELK와 EFK는 모두 로그 분석에 사용되지만, 수집 도구의 차이�
 
 <br/>
 
-## 🛠️ 기술 스택
-
-| 구성요소      | 버전      | 역할                |
-|---------------|-----------|---------------------|
-| Filebeat      | 8.13.4    | 로그 수집 (ELK)     |
-| Logstash      | 8.13.4    | 데이터 가공/전송    |
-| Fluentd       | 1.16.3    | 데이터 가공/전송(EFK) |
-| Elasticsearch | 8.13.4    | 로그 저장/검색      |
-| Kibana        | 8.13.4    | 로그 시각화         |
-| Metricbeat    | 8.13.4    | 시스템 성능 측정    |
-| Spring Boot   | 3.5.3     | API/로그 생성       |
-| JMeter        | 5.6.3     | 부하 생성           |
+## 실험 시나리오
+1. JMeter에서 thread 수: 100개, Ramp-up: 60초, Loop Count: 8000회 설정을 통해 총 80만건의 로그데이터 생성
+2. Spring Boot App에서 POST 메소드를 통해 각 파이프라인에 80만건의 로그데이터를 JSON 형식으로 전송
+3. Filebeat & Logstash와 Fluentd가 각각의 설정을 기반으로 Elasticsearch에 데이터 가공/필터링 및 적재
+4. Metricbeat가 각 파이프라인이 실행되는 동안 리소스(Memory, CPU 등) 사용율 측정
+5. Kibana를 통해 Metricbeat가 수집한 각 파이프라인의 성능 측정 데이터 시각화
 
 <br/>
 
-## 🌐 실험 환경 및 실행 방법
+## 성능 측정 핵심 지표
+- CPU 사용량
+- Memory 사용량
+- Disk 사용량
 
-- **운영체제:** Ubuntu
-- **로그·ELK·Metricbeat:** Docker Compose로 통합 관리
-- **Spring Boot:** Ubuntu에 직접 기동  
-- **부하테스트:** JMeter (더미 CSV데이터로 80만 건 POST 요청)
-- **Spring Boot 실행 후 부하 실행:**  
-  JMeter 스레드 수/루프/램프업 등 실전 설정 info 제공
 
 <br/>
 
-## 📂 디렉토리 구성
-```
+## 성능 테스트 결과 요약
 
-├── docker-compose.yml
-├── logstash/
-│ ├── config/
-│ └── pipeline/
-├── filebeat/
-│ └── filebeat.yml
-├── springboot/ (jar/소스)
-├── jmeter/ (테스트 시나리오, 더미 CSV)
-├── 발표자료/
-├── metricbeat/
-│ └── metricbeat.yml
-└── README.md
-```
+성능 측정 실험은 Metricbeat를 사용하여 각 파이프라인에 총 80만건의 로그데이터를 수집하는 과정을 3번 거쳐서 성능 데이터 수집 및 분석
+
+1. CPU 사용량
+  - ELK Stack
+  ![CPU-ELK](https://github.com/user-attachments/assets/117409be-50af-47cd-8f66-0c355786f168)
+    - 데이터를 수집하는 시점에 CPU 사용량이 약 80%까지 급격히 증가
+    - 데이터를 처리하는 동안 80%의 CPU 사용량 유지
+    - 데이터 처리 완료 후 CPU 사용량 급격히 감소
+
+  - EFK Stack
+  ![CPU-EFK](https://github.com/user-attachments/assets/b42a0911-dd5c-4a4f-bdcd-49b445300b44)
+    - 각 실험들의 CPU 사용량 피크를 보면 약 48%로 상대적으로 낮음
+    - 지속시간 또한 짧게 형성되어 있음
+
+2. Memory 사용량
+  - ELK Stack
+  ![Memory-ELK](https://github.com/user-attachments/assets/092cc077-3a07-47b9-a2ff-d416b60bc370)
+    - 총 8GB 중 7.2GB의 메모리를 사용하며 약 94%의 메모리 점유율을 확인할 수 있음
+
+  - EFK Stack
+  ![Memory-EFK](https://github.com/user-attachments/assets/cea3e046-314e-4f99-93e2-7f3412a01eca)
+    - 총 8GB 중 6GB의 메모리를 사용하며 약 80%의 메모리 점유율을 확인할 수 있음
+
+3. Disk 사용량
+  - ELK Stack
+  ![Disk-ELK](https://github.com/user-attachments/assets/c0f4292f-f653-4d14-9840-122ae063ec40) 
+    - 실험 시작과 동시에 디스크 사용량이 약 15%까지 빠르게 도달 
+    - 실험을 반복할수록 점진적으로 디스크 사용량이 조금씩 증가
+
+  - EFK Stack
+  ![Disk-EFK](https://github.com/user-attachments/assets/a817c249-0d96-4b84-92ef-31ad030ce031)
+    - 실험을 시작하고 디스크 사용량이 약 8% 정도 되는 것을 확인할 수 있음
+    - 디스크 사용량이 안정적으로 유지되는 것을 볼 수 있음
+
+
 
 <br/>
 
-## 🔎 실험 시나리오 및 로그 흐름
+## 🔎 인사이트
 
-1. JMeter → Spring Boot `/login` API POST 요청 (총 80만 건)
-2. Spring Boot에서 로그파일(JSON) 저장
-3. Filebeat/Fluentd가 로그파일 실시간 감지, Logstash/Fluentd로 전송
-4. Logstash/Fluentd → 데이터 파싱·정제 → Elasticsearch 색인
-5. Kibana(Metricbeat)로 로그/자원(CPU/Mem등) 실시간 시각화/모니터링
+1. **리소스 소비 구조 차이**
+   - ELK 스택의 Logstash는 JVM 기반으로 동작하여 **CPU와 메모리를 많이 소모**하는 반면, Fluentd는 C와 Ruby 기반으로 구현되어 상대적으로 가볍게 실행
+   - 실제 측정 결과에서도 ELK는 CPU 80%, 메모리 94%까지 치솟았으나, EFK는 CPU 48%, 메모리 80% 수준에서 안정적으로 동작
+   - 이는 **클라우드 네이티브 환경**이나 **리소스 제약이 큰 시스템**에서는 EFK가 더 적합함을 보여줌
+
+2. **처리 성능과 복잡성의 균형**
+   - Logstash는 복잡한 데이터 파이프라인 구성, 고급 필터링, 멀티 파이프라인 등을 지원하여 **대규모·정교한 로그 처리**에 강점이 있음
+   - 반면 Fluentd는 플러그인 중심으로 빠르게 확장 가능하지만, 복잡한 변환보다는 **경량화·단순성**에 초점이 맞춰져 있음
+   - 즉, **처리량(throughput)·정밀 제어**가 중요하다면 ELK, **경량성과 유연성**이 중요하다면 EFK를 선택하는 것이 합리적
+
+3. **운영 안정성과 유지보수성**
+   - Filebeat는 경량·단일 목적의 수집기로 안정성이 높고, 설정이 단순하여 운영 부담이 적음
+   - Fluentd는 플러그인 생태계가 풍부해 다양한 데이터 소스와 연동 가능하지만, 버전 충돌·의존성 관리 문제(예: Elasticsearch 플러그인 호환성 이슈)로 **운영 시 디버깅 비용**이 발생할 수 있음
+   - 따라서 **운영의 단순성 vs 확장성**이라는 선택지가 존재
+
+4. **데이터 손실 가능성**
+   - 실험 과정에서 JMeter로 80만 건을 전송했음에도 Elasticsearch에 약 68.5%만 적재되는 현상이 발생
+   - 이는 Filebeat/Fluentd 버퍼링, Logstash 파이프라인 지연, Elasticsearch 인덱싱 처리 속도 등 **복합적인 병목** 때문으로 추정
+   - 따라서 대용량 로그 수집 환경에서는 **버퍼 튜닝, 파이프라인 최적화, 모니터링 강화**가 필수적
+
+5. **실무적 선택 기준**
+   - **대규모 트래픽 처리, 복잡한 데이터 전처리·분석**이 필요한 경우 → **ELK 우위**  
+   - **리소스 효율성, 클라우드 네이티브 아키텍처, 단순 로그 수집·전송** 중심인 경우 → **EFK 우위**  
+   - 궁극적으로는 두 스택을 배타적으로 고르는 것이 아니라, **Filebeat + Fluentd 조합** 혹은 **경량 로그는 EFK, 고급 분석은 ELK**처럼 **하이브리드 접근**이 가장 실무적으로 유효
+
 
 <br/>
-
-## 📊 성능 비교 요약
-
-| 측정 항목     | ELK (Logstash)          | EFK (Fluentd)         |
-|---------------|------------------------|-----------------------|
-| **CPU 사용률** | 피크 80% 부근, 고자원 소비 | 피크 48%, 부하 짧고 낮음 |
-| **메모리**     | 7.2GB(설정치 94%)       | 6GB(설정치 80%)       |
-| **디스크**     | 15%, 반복 시 점진 증가   | 8%, 안정적 유지        |
-| **네트워크**   | 최대 4.3Mbit/s, 높음    | 최대 1.0Mbit/s, 낮음   |
-| **장점 요약**  | 복잡/대규모/고급분석 강점 | 경량/효율/실시간 처리강점 |
-
-<br/>
-
-## 💬 실무 현장 도입 예시
-
-- **ELK**: 넷플릭스/이베이/카카오 등 복잡 파싱·시각화 요구, 장애·보안 로그 중심  
-- **EFK**: 쿠버네티스 기반, 대규모 서버군, 자원 제한 환경 실시간 모니터링 중심
-
-<br/>
-
-## 💡 Metricbeat의 활용
-
-- 시스템·컨테이너의 CPU/Memory/네트워크 등 성능지표를 실시간으로 수집  
-- Kibana Observability로 부하테스트 중 자원 변화까지 시각화
-
-<br/>
-
-## 🧑‍💻 실험 결과물 예시
-
-- <a href="./FISA_1차 기술세미나_ELKvsEFK.pptx" download>
-  발표 PPT 링크
-</a>
-
-| 화면 설명                             | 미리보기                      |
-| --------------------------------- | ------------------------- |
-| 🌐 **CPU-ELK**       | 📌 ![CPU-ELK](https://github.com/user-attachments/assets/117409be-50af-47cd-8f66-0c355786f168)  |
-| 📂 **CPU-EFK** | 📌 ![CPU-EFK](https://github.com/user-attachments/assets/b42a0911-dd5c-4a4f-bdcd-49b445300b44) |
-| ❌ **Memory-ELK**  | 📌  ![Memory-ELK](https://github.com/user-attachments/assets/092cc077-3a07-47b9-a2ff-d416b60bc370)    |
-| 🔎 **Memory-EFK**   | 📌  ![Memory-EFK](https://github.com/user-attachments/assets/cea3e046-314e-4f99-93e2-7f3412a01eca)      |
-| 🏠 **Disk-ELK**        | 📌 ![Disk-ELK](https://github.com/user-attachments/assets/c0f4292f-f653-4d14-9840-122ae063ec40)        |
-| ⚠️ **Disk-EFK**         | 📌 ![Disk-EFK](https://github.com/user-attachments/assets/a817c249-0d96-4b84-92ef-31ad030ce031)          |
-
-
-
----
-
-## 📝 프로젝트 활용/시사점
-
-- **ELK**는 복잡한 로그처리, 파싱, 대시보드가 필요한 엔터프라이즈 서비스에 적합
-- **EFK**는 경량 실시간 로그수집이나 컨테이너/IoT/스타트업·SMB 환경에 적합
-- 두 파이프라인 모두 현대 DevOps/Observability 인프라의 핵심
-
 
 ## 🛠 트러블슈팅 (Troubleshooting)
 
