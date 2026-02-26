@@ -27,7 +27,7 @@ ELK와 EFK는 모두 로그 분석에 사용되지만, 수집 도구의 차이�
 
 <br/>
 
-## 팀 역할 분담
+## 팀 구성
 
 
 <table>
@@ -59,21 +59,6 @@ ELK와 EFK는 모두 로그 분석에 사용되지만, 수집 도구의 차이�
     </td>
     <td align="center">
       <img src="https://github.com/Gill010147.png" width="100"/>
-    </td>
-  </tr>
-  <tr>
-    <!-- 역할 -->
-    <td align="center">
-      PPT, Elasticsearch 자료 정리
-    </td>
-    <td align="center">
-      EFK 실험 환경 구성 및 로그 분석
-    </td>
-    <td align="center">
-      ELK 실험 환경 구성 및 성능 측정
-    </td>
-    <td align="center">
-      파이프라인 성능비교, 결과 정리
     </td>
   </tr>
 </table>
